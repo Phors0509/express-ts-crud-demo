@@ -6,7 +6,7 @@ const port = 4000;
 
 app.use(express.json())
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((_req: Request, _res: Response, next: NextFunction) => {
 	console.log(`Request received at ${new Date().toDateString()}`);
 	next();
 })
@@ -24,12 +24,12 @@ const items: ItemsProp[] = [
 	},
 	{
 		id: 2,
-		name: "So Phea"
+		name: "So Pshea"
 	}
 ];
 
-app.get("/items", (req: Request, res: Response) => {
-	if (!items) return res.status(404).send("Item Not Found !")
+app.get("/items", (_req: Request, res: Response) => {
+	if (!items) return res.status(404).send("Item Not Founds !")
 	res.status(200).json(items)
 })
 
@@ -41,12 +41,12 @@ app.get("/item/:id", (req: Request, res: Response) => {
 
 app.post("/item", (req: Request, res: Response) => {
 	const newItem: ItemsProp = {
-		id: items.length + 1,
+		id: items.length === 0 ? 1 : items[items.length - 1].id + 1,
 		name: req.body.name
 	}
 	if (!newItem.name) return res.status(400).send("Check Code !!!")
 	items.push(newItem)
-	res.status(201).json(newItem)
+	res.status(201).send(newItem)
 })
 
 app.put("/item/:id", (req: Request, res: Response) => {
@@ -62,7 +62,7 @@ app.delete("/item/:id", (req: Request, res: Response) => {
 	const item = items.findIndex(item => item.id === parseInt(req.params.id))
 	if (item === -1) return res.status(404).send("Not Found !")
 	items.splice(item, 1)
-	res.status(204).send("Item was delete ")
+	res.status(200).json(`Item Id ${req.params.id} was Deleted`)
 })
 
 app.listen(port, () => {
