@@ -12,10 +12,44 @@ app.use((_req: Request, _res: Response, next: NextFunction) => {
 
 // Get all items
 
-app.get("/items", async (_req: Request, res: Response) => {
+app.get("/items", async (req: Request, res: Response) => {
     try {
-        const items = await Items.find()
-        res.status(200).json(items)
+
+        // Pagination & limit 
+
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 5;
+        const skip = (page - 1) * limit;
+
+        // Filter by Category
+
+        const category = req.query.category as string;
+
+        // Sort by price and stock
+
+        const sortBy = req.query.sort as string
+        const sortOrder = req.query.sortOrder as string === "desc" ? -1 : 1
+
+
+
+        // Query find all items 
+
+        let query = Items.find();
+
+        if (category) {
+            query.where("category").equals(category)
+        }
+
+        if (sortBy && ['price', 'stock'].includes(sortBy)) {
+            query = query.sort({ [sortBy]: sortOrder });
+        }
+
+        // pass query 
+
+        const items = await query.skip(skip).limit(limit);
+        const totalPages = await Items.countDocuments(category ? { category } : {})
+
+        res.status(200).json({ items, currentPage: page, totalPages: Math.ceil(totalPages / limit), limit: limit })
     } catch (err) {
         res.status(500).send("Error fetcing Items")
     }
