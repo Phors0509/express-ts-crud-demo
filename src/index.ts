@@ -71,7 +71,7 @@ app.get("/item/:id", async (req: Request, res: Response) => {
 app.post("/item", validateItemInput, async (req: Request, res: Response) => {
 	try {
 		const newItem = new Item(req.body);
-		await newItem.save();
+		await newItem.save()
 		res.status(201).send(newItem);
 	} catch (error) {
 		res.status(500).send("Error creating item");

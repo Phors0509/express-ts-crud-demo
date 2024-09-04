@@ -48,7 +48,7 @@ app.post("/items", validationItemInput, async (req: Request, res: Response) => {
 
 // Put Item (Update)
 
-app.put("/items/:id", async (req: Request, res: Response) => {
+app.put("/items/:id", validationItemInput, async (req: Request, res: Response) => {
     try {
         const updateItem = await Items.findByIdAndUpdate(req.params.id, req.body, { new: true })
         if (!updateItem) return res.status(404).send("Not found Item")
