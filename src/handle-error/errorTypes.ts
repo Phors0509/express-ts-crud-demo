@@ -1,0 +1,5 @@
+export enum ErrorType {
+    NOT_FOUND = 'NOT_FOUND',
+    BAD_REQUEST = 'BAD_REQUEST',
+    INTERNAL_SERVER = 'INTERNAL_SERVER',
+}
